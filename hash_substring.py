@@ -9,10 +9,7 @@ def read_input():
     if mode[0] == "I":
         return (input().rstrip(), input().rstrip())
     elif mode[0] == "F":
-        file_name = input()
-        if "a" in file_name:
-            return
-        file_name = 'tests/' + file_name
+        file_name = 'tests/06'
         with open(file_name, 'r') as f:
             pattern = f.readline().rstrip()
             text = f.readline().rstrip()
@@ -44,6 +41,7 @@ def print_occurrences(output):
 def get_occurrences(pattern, text):
     global B, Q
     pattern_length = len(pattern)
+    text_length = len(text)
     
     # this function should find the occurances using Rabin Karp alghoritm 
     multiplier = 1
@@ -55,11 +53,12 @@ def get_occurrences(pattern, text):
     pattern_hash = get_hash(pattern)
     text_hash = get_hash(text[:pattern_length])
 
-    for i in range(pattern_length, len(text)):
-        text_hash = (B*(text_hash-ord(text[i-pattern_length])*multiplier)+ord(text[i]))%Q
+    for i in range(text_length - pattern_length + 1):
         if text_hash == pattern_hash:
-            if text[i-pattern_length+1:i + 1] == pattern:
-                occurrences.append(i-pattern_length+1)
+            if text[i:i + pattern_length] == pattern:
+                occurrences.append(i)
+        if i < text_length - pattern_length:
+            text_hash = (B*(text_hash-ord(text[i])*multiplier)+ord(text[i+pattern_length]))%Q
     # and return an iterable variable
     return occurrences
 
